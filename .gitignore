@@ -1,0 +1,81 @@
+# Build artifacts
+*.so
+*.dylib
+*.dll
+*.o
+*.a
+*.lib
+*.exp
+
+# Raku precompilation
+.precomp/
+
+old/
+
+# Editor files
+*.swp
+*.swo
+*~
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+.project
+.settings/
+
+# Test artifacts
+.raku-test/
+.prove/
+test-results/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Backup files
+*.bak
+*.old
+*.orig
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Distribution files
+*.tar.gz
+*.zip
+
+# Local configuration
+.env
+.local
+.python-version
+.dockerignore
+
+# Build directories
+build/
+dist/
+
+# Log files
+*.log
+
+# Core dumps
+core
+core.*
+
+# Debug symbols
+*.dSYM/
+benchmark-basic.raku
+benchmark-comparison.raku
+benchmark-full.raku
+benchmark-simple.raku
+
+.claude/

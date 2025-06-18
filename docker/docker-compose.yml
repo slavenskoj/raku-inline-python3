@@ -1,0 +1,147 @@
+version: '3.8'
+
+services:
+  # Development environment
+  dev:
+    build:
+      context: .
+      target: development
+    image: inline-python3:dev
+    container_name: inline-python3-dev
+    volumes:
+      - .:/workspace
+      - raku-cache:/root/.raku
+      - python-cache:/root/.cache/pip
+    environment:
+      - PERL6LIB=/workspace/lib
+      - LD_LIBRARY_PATH=/workspace/resources/libraries
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+  # Test runner
+  test:
+    build:
+      context: .
+      target: test
+    image: inline-python3:test
+    container_name: inline-python3-test
+    volumes:
+      - .:/workspace:ro
+    environment:
+      - PERL6LIB=/workspace/lib
+      - LD_LIBRARY_PATH=/workspace/resources/libraries
+    command: ["prove", "-v", "-r", "--exec", "raku -I lib", "t/"]
+
+  # Production image
+  prod:
+    build:
+      context: .
+      target: production
+    image: inline-python3:prod
+    container_name: inline-python3-prod
+    environment:
+      - PERL6LIB=/app/lib
+      - LD_LIBRARY_PATH=/app/resources/libraries
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  # Jupyter notebook for interactive development
+  jupyter:
+    build:
+      context: .
+      target: development
+    image: inline-python3:dev
+    container_name: inline-python3-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/workspace
+      - jupyter-data:/root/.jupyter
+    environment:
+      - PERL6LIB=/workspace/lib
+      - LD_LIBRARY_PATH=/workspace/resources/libraries
+    command: >
+      jupyter notebook
+      --ip=0.0.0.0
+      --port=8888
+      --no-browser
+      --allow-root
+      --NotebookApp.token=''
+      --NotebookApp.password=''
+
+  # Documentation builder
+  docs:
+    build:
+      context: .
+      target: development
+    image: inline-python3:dev
+    container_name: inline-python3-docs
+    volumes:
+      - .:/workspace
+      - ./docs:/workspace/docs
+    command: >
+      bash -c "
+        cd /workspace &&
+        raku --doc=Markdown lib/Inline/Python3.rakumod > docs/API-generated.md &&
+        echo 'Documentation generated in docs/API-generated.md'
+      "
+
+  # Performance benchmarking
+  benchmark:
+    build:
+      context: .
+      target: development
+    image: inline-python3:dev
+    container_name: inline-python3-benchmark
+    volumes:
+      - .:/workspace
+      - ./benchmarks:/workspace/benchmarks
+    environment:
+      - PERL6LIB=/workspace/lib
+      - LD_LIBRARY_PATH=/workspace/resources/libraries
+    command: ["raku", "benchmark-simple.raku"]
+
+  # Multi-Python version testing
+  python38:
+    build:
+      context: .
+      dockerfile: Dockerfile.python38
+    image: inline-python3:py38
+    container_name: inline-python3-py38
+    volumes:
+      - .:/workspace:ro
+    command: ["prove", "-v", "-r", "--exec", "raku -I lib", "t/"]
+
+  python39:
+    build:
+      context: .
+      dockerfile: Dockerfile.python39
+    image: inline-python3:py39
+    container_name: inline-python3-py39
+    volumes:
+      - .:/workspace:ro
+    command: ["prove", "-v", "-r", "--exec", "raku -I lib", "t/"]
+
+  python310:
+    build:
+      context: .
+      dockerfile: Dockerfile.python310
+    image: inline-python3:py310
+    container_name: inline-python3-py310
+    volumes:
+      - .:/workspace:ro
+    command: ["prove", "-v", "-r", "--exec", "raku -I lib", "t/"]
+
+volumes:
+  raku-cache:
+  python-cache:
+  jupyter-data:
+
+networks:
+  default:
+    name: inline-python3-network

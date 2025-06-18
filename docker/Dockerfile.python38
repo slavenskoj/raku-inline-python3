@@ -1,0 +1,56 @@
+# Dockerfile for testing with Python 3.8
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Python 3.8 and dependencies
+RUN apt-get update && apt-get install -y \
+    python3.8 \
+    python3.8-dev \
+    python3.8-venv \
+    python3-pip \
+    build-essential \
+    gcc \
+    g++ \
+    make \
+    git \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set Python 3.8 as default
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1 \
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
+
+# Install Rakudo
+ENV RAKUDO_VERSION=2024.10
+RUN cd /tmp \
+    && wget https://github.com/rakudo/star/releases/download/$RAKUDO_VERSION/rakudo-star-$RAKUDO_VERSION-linux-x86_64-gcc.tar.gz \
+    && tar xzf rakudo-star-$RAKUDO_VERSION-linux-x86_64-gcc.tar.gz \
+    && cd rakudo-star-$RAKUDO_VERSION \
+    && ./bin/rstar install -p /usr/local/rakudo \
+    && cd / \
+    && rm -rf /tmp/rakudo-star-*
+
+ENV PATH="/usr/local/rakudo/bin:/usr/local/rakudo/share/perl6/site/bin:${PATH}"
+
+# Install Python packages
+RUN pip3 install --no-cache-dir numpy pandas requests
+
+WORKDIR /workspace
+COPY . /workspace/
+
+# Build C library
+RUN cd src && \
+    gcc -shared -fPIC -o python3_helper.so python3_helper.c \
+        $(python3-config --cflags) $(python3-config --ldflags) && \
+    mkdir -p ../resources/libraries && \
+    cp python3_helper.so ../resources/libraries/
+
+# Install module
+RUN zef install --force-install .
+
+ENV PERL6LIB=/workspace/lib
+ENV LD_LIBRARY_PATH=/workspace/resources/libraries:$LD_LIBRARY_PATH
+
+CMD ["prove", "-v", "-r", "--exec", "raku -I lib", "t/"]

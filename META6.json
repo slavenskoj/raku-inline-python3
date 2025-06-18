@@ -1,0 +1,46 @@
+{
+    "perl": "6.d",
+    "name": "Inline::Python3",
+    "version": "0.0.1",
+    "auth": "zef:slavenskoj",
+    "api": "1",
+    "description": "Python 3 integration for Raku",
+    "authors": ["Danslav Slavenskoj"],
+    "license": "Artistic-2.0",
+    "provides": {
+        "Inline::Python3": "lib/Inline/Python3.rakumod",
+        "Inline::Python3::Config": "lib/Inline/Python3/Config.rakumod",
+        "Inline::Python3::Installer": "lib/Inline/Python3/Installer.rakumod",
+        "Inline::Python3::Performance": "lib/Inline/Python3/Performance.rakumod",
+        "Inline::Python3::Performance::Monitor": "lib/Inline/Python3/Performance/Monitor.rakumod",
+        "Inline::Python3::NumPy": "lib/Inline/Python3/NumPy.rakumod",
+        "Inline::Python3::BatchConvert": "lib/Inline/Python3/BatchConvert.rakumod",
+        "Inline::Python3::Cache::Method": "lib/Inline/Python3/Cache/Method.rakumod",
+        "Inline::Python3::Cache::String": "lib/Inline/Python3/Cache/String.rakumod",
+        "Inline::Python3::Cache::Integer": "lib/Inline/Python3/Cache/Integer.rakumod"
+    },
+    "depends": [],
+    "build-depends": [],
+    "test-depends": ["Test"],
+    "resources": [
+        "libraries"
+    ],
+    "source-url": "https://github.com/slavenskoj/raku-inline-python3",
+    "support": {
+        "bugtracker": "https://github.com/slavenskoj/raku-inline-python3/issues",
+        "source": "https://github.com/slavenskoj/raku-inline-python3"
+    },
+    "tags": [
+        "Python",
+        "Python3",
+        "Inline",
+        "Interop",
+        "FFI",
+        "NativeCall",
+        "NumPy",
+        "Performance",
+        "DataScience",
+        "nlp",
+        "MachineLearning"
+    ]
+}
