@@ -1,4 +1,4 @@
-- [ ] # Inline::Python3
+# Inline::Python3
 
 
 A Raku module that enables seamless integration with Python3, allowing you to execute Python3 code, access Python3 objects, and leverage Python3's extensive standard library directly from Raku. 
